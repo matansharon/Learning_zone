@@ -1,2 +1,3 @@
 .venv/
 pytorch_course_by_daniel/daniel_codes/data/
+.env
