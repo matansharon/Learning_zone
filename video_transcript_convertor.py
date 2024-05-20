@@ -6,8 +6,8 @@ def get_anthropic_response(text):
     client=anthropic.Anthropic(
         api_key=os.environ.get("ANTHROPIC_API_KEY"))
     message = client.messages.create(
-            model="claude-3-opus-20240229",
-            # model='claude-3-haiku-20240307',
+            # model="claude-3-opus-20240229",
+            model='claude-3-haiku-20240307',
             max_tokens=4000,
             temperature=0.2,
             system=f"""
@@ -19,7 +19,7 @@ def get_anthropic_response(text):
                 {"role": "user", "content":text}
             ]
         )
-    return message.content[0].text
+
 
 
 def main():

@@ -1,0 +1,60 @@
+Here is a summary of the key points from the lecture transcript on linear regression:
+
+- Linear regression is a supervised learning algorithm for regression problems where the output y is a continuous value. It is one of the simplest and most widely used learning algorithms.
+
+- In linear regression, the hypothesis h(x) is a linear function of the input features x. With one input feature, h(x) = θ0 + θ1x1. With multiple features, h(x) = θ0 + θ1x1 + θ2x2 + ... + θnxn. 
+
+- The parameters θ are learned by minimizing a cost function J(θ) which is the average squared difference between the predicted values h(x) and the actual y values across the training examples. 
+
+- Gradient descent is an iterative optimization algorithm used to minimize J(θ). It starts with initial parameter values and repeatedly takes steps in the negative gradient direction to descend to the minimum.
+
+- With large datasets, stochastic gradient descent is preferred over batch gradient descent. In stochastic GD, the parameters are updated using the gradient on single examples rather than the entire batch, allowing faster progress.
+
+- For linear regression specifically, the normal equations method provides an analytical solution to find the optimal θ values in one step without needing an iterative algorithm. It solves for θ using matrix operations.
+
+- Key concepts introduced include the hypothesis representation, cost function, gradient descent, stochastic gradient descent, the normal equations, and matrix notation and operations useful for deriving learning algorithms.
+
+Here is an example Python code demonstrating the concepts of linear regression with gradient descent:
+
+```python
+import numpy as np
+
+# Linear regression hypothesis
+def h(x, theta):
+    return np.dot(x, theta)
+
+# Cost function J(theta)  
+def cost(X, y, theta):
+    m = len(y)
+    return 1/(2*m) * np.sum((h(X, theta) - y)**2)
+
+# Gradient descent update
+def gradient_descent_update(X, y, theta, alpha):
+    m = len(y)
+    theta = theta - alpha/m * np.dot(X.T, h(X, theta) - y)
+    return theta
+
+# Generate example linear data
+np.random.seed(1)
+X = np.random.rand(100,2)  
+y = 3 + 2*X[:,0] + X[:,1] + np.random.randn(100)*0.1
+
+# Add intercept term to X
+X_b = np.c_[np.ones((100,1)), X]  
+
+# Initialize parameters
+theta = np.zeros(3)
+
+# Hyperparameters
+num_iters = 1000
+alpha = 0.1
+
+# Perform gradient descent
+for i in range(num_iters):
+    theta = gradient_descent_update(X_b, y, theta, alpha)
+    
+print(f'Learned parameters: {theta}')
+print(f'Final cost: {cost(X_b, y, theta):.3f}')
+```
+
+This code demonstrates defining the linear regression hypothesis, cost function, and gradient descent update rule. It then generates example linear data, performs gradient descent to learn the optimal parameters θ, and prints out the learned parameters and final cost. The key steps match the concepts covered in the lecture.
