@@ -27,7 +27,7 @@ def answer_question(query: str) -> str:
     # This function runs the query through the RAG pipeline
     if not query.strip():
         return "Please enter a question."
-    return qa_chain.run(query)
+    return qa_chain.invoke(query)
 
 # Gradio interface
 with gr.Blocks() as demo:
