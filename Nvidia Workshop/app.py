@@ -1,47 +1,37 @@
-import os
-import gradio as gr
-from langchain.chains import RetrievalQA
-from langchain_openai import OpenAIEmbeddings, ChatOpenAI
-from langchain_chroma import Chroma
+import streamlit as st
+import PyPDF2
 
 
-# Make sure OPENAI_API_KEY is set in your environment
-# os.environ["OPENAI_API_KEY"] = "your-key-here"
+def read_pdf(file: st.file_uploader): # type: ignore
+    pdf_reader=PyPDF2.PdfReader(file)
+    pages=pdf_reader.pages
+    text=''
+    for page in pages:
+        text+=page.extract_text()
+    return text
 
-# Load your vector store
-# This assumes you already have a Chroma DB created at ./chroma_db
-# If you haven't created it, you'd need something like:
-# vectorstore = Chroma.from_documents(docs, embedding=OpenAIEmbeddings())
-# vectorstore.persist()
-vectorstore = Chroma(persist_directory="./chroma_db", embedding_function=OpenAIEmbeddings())
 
-# Create a retrieval-based QA chain
-retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
-qa_chain = RetrievalQA.from_chain_type(
-    llm=ChatOpenAI(temperature=0), 
-    chain_type="stuff",
-    retriever=retriever
-)
+def sidebar():
+    with st.sidebar:
+        file=st.file_uploader("Upload a file",type=["pdf"])
+        if file:
+            text=read_pdf(file)
+            st.write("Text extracted from the pdf file")
+            st.write(text)
+            st.write("End of text")
+        else:
+            st.write("Please upload a pdf file")
+        
 
-def answer_question(query: str) -> str:
-    # This function runs the query through the RAG pipeline
-    if not query.strip():
-        return "Please enter a question."
-    return qa_chain.invoke(query)
-
-# Gradio interface
-with gr.Blocks() as demo:
-    gr.Markdown("## Retrieval-Augmented Generation App")
-    question = gr.Textbox(label="Your question", placeholder="Ask a question...")
-    answer = gr.Textbox(label="Answer")
-    submit_btn = gr.Button("Get Answer")
+def main():
+    sidebar()
+    st.title("Nvidia Workshop")
+    st.write("Welcome to the Nvidia Workshop")
+    st.write("This is a simple Streamlit app")
     
-    submit_btn.click(fn=answer_question, inputs=question, outputs=answer)
+    query=st.chat_input("Enter your query")
+    if query:
+        st.write("You entered: ",query)
 
-# If you just want to run locally:
-demo.launch()
-
-# To use LangServe, run:
-# 1. Save this code as app.py
-# 2. In a terminal: langserve app:demo
-#   This should host the Gradio app and chain via LangServe.
+if __name__ == "__main__":
+    main()
